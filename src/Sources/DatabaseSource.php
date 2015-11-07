@@ -2,8 +2,41 @@
 
 namespace Nurmanhabib\WilayahIndonesia\Sources;
 
-class SampleSource extends Source
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+class DatabaseSource extends Source
 {
+    protected $db;
+
+    public function __construct($host = null, $username = null, $password = null, $database = null)
+    {
+        $config     = require_once(__DIR__ . '/../../config/database.php');
+        $config     = array_merge(
+            array_filter($config),
+            array_filter(
+                compact('host', 'username', 'password', 'database')
+            )
+        );
+        
+        $this->setConnection($config);
+    }
+
+    public function setConnection($config)
+    {
+        $capsule = new Capsule;
+        $capsule->addConnection($config);
+        $capsule->setAsGlobal();
+
+        $this->db = $capsule->getConnection();
+
+        return $this;
+    }
+
+    public function getConnection()
+    {
+        return $this->db;
+    }
+
     public function getAllProvinsi()
     {
         $data = $this->db->table('inf_lokasi')

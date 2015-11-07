@@ -9,11 +9,13 @@ class WilayahIndonesia
     protected $source;
     protected $selected;
     protected $text_no_selected;
+    protected $url_ajax;
 
-    public function __construct(Sources\Source $source = null)
+    public function __construct(Sources\Source $source = null, $url_ajax = 'ajax.php')
     {
-        $this->source           = ($source instanceof Sources\Source) ? $source : new Sources\ArraySource;
+        $this->source           = $source ?: new Sources\DatabaseSource;
         $this->selected         = null;
+        $this->url_ajax         = $url_ajax;
         $this->text_no_selected = array(
             'provinsi'      => 'Silahkan pilih provinsi...',
             'kota'          => '--',
@@ -25,11 +27,13 @@ class WilayahIndonesia
     public function setSource(Sources\Source $source)
     {
         $this->source = $source;
+
+        return $this;
     }
 
-    public function setConnection($connection)
+    public function getSource()
     {
-        $this->source->setConnection($connection);
+        return $this->source;
     }
 
     public function generateSelect($name, $options = array(), $selected = null)
@@ -171,13 +175,15 @@ class WilayahIndonesia
         return $dropdown;
     }
 
-    public function script($url = 'ajax.php', $loading = 'Loading...')
+    public function script($url_ajax = null, $loading = 'Loading...')
     {
-        echo "<script>var url = '$url';";
-        echo "var loading = '$loading';" . PHP_EOL;
+        $url_ajax = $url_ajax ?: $this->url_ajax;
 
-        require_once('wilayah-indonesia-chained.js');
+        $script  = "<script>var url = '$url_ajax';";
+        $script .= "var loading = '$loading';" . PHP_EOL;
+        $script .= file_get_contents(__DIR__ . '/wilayah-indonesia-chained.js');
+        $script .= "</script>";
 
-        echo "</script>";
+        return $script;
     }
 }
