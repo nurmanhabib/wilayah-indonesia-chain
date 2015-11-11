@@ -88,7 +88,7 @@ class WilayahIndonesia
     {
         $this->withSelected($selected);
 
-        $options = $provinsi && $kota && $kecamatan ? $this->source->getDesaByParent($provinsi, $kota, $kecamatan, $desa) : array();
+        $options = $provinsi && $kota && $kecamatan ? $this->source->getDesaByParent($provinsi, $kota, $kecamatan) : array();
 
         return $this->generateSelect('desa', $options);
     }
