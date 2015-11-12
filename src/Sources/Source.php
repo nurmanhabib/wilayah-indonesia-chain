@@ -11,4 +11,6 @@ abstract class Source
     abstract public function getKecamatanByParent($provinsi, $kota);
 
     abstract public function getDesaByParent($provinsi, $kota, $kecamatan);
+
+    abstract public function getParentByDesa($desa);
 }

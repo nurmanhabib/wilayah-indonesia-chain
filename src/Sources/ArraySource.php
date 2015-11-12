@@ -92,4 +92,9 @@ class ArraySource extends Source
 
         return $result;
     }
+
+    public function getParentByDesa($desa)
+    {
+        
+    }
 }

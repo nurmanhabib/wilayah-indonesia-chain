@@ -8,33 +8,9 @@ class DatabaseSource extends Source
 {
     protected $db;
 
-    public function __construct($host = null, $username = null, $password = null, $database = null)
+    public function __construct()
     {
-        $config     = require_once(__DIR__ . '/../../config/database.php');
-        $config     = array_merge(
-            array_filter($config),
-            array_filter(
-                compact('host', 'username', 'password', 'database')
-            )
-        );
-        
-        $this->setConnection($config);
-    }
-
-    public function setConnection($config)
-    {
-        $capsule = new Capsule;
-        $capsule->addConnection($config);
-        $capsule->setAsGlobal();
-
-        $this->db = $capsule->getConnection();
-
-        return $this;
-    }
-
-    public function getConnection()
-    {
-        return $this->db;
+        $this->db = Capsule::connection();
     }
 
     public function getAllProvinsi()
@@ -114,6 +90,32 @@ class DatabaseSource extends Source
             $result[$row->lokasi_kode] = $row->lokasi_nama;
         }
 
+        return $result;
+    }
+
+    public function getParentByDesa($desa)
+    {
+        $inf_lokasi = $this->db->table('inf_lokasi')
+                    ->where('lokasi_kode', $desa)
+                    ->first();
+
+        if ($inf_lokasi) {
+            $provinsi   = sprintf('%02d', $inf_lokasi->lokasi_propinsi);
+            $kota       = sprintf('%02d', $inf_lokasi->lokasi_kabupatenkota);
+            $kecamatan  = sprintf('%02d', $inf_lokasi->lokasi_kecamatan);
+            $desa       = sprintf('%04d', $inf_lokasi->lokasi_kelurahan);
+
+            $result['provinsi']     = $provinsi . '.00.00.0000';
+            $result['kota']         = $provinsi . '.' . $kota . '.00.0000';
+            $result['kecamatan']    = $provinsi . '.' . $kota . '.' . $kecamatan . '.0000';
+            $result['desa']         = $provinsi . '.' . $kota . '.' . $kecamatan . '.' . $desa;
+        } else {
+            $result['provinsi']     = '';
+            $result['kota']         = '';
+            $result['kecamatan']    = '';
+            $result['desa']         = '';
+        }
+        
         return $result;
     }
 }
