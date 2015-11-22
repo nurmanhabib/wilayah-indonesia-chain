@@ -58,9 +58,11 @@ class WilayahIndonesia
 
         return $html;
     }
-
-    public function generateSelectProvinsi()
+    
+    public function generateSelectProvinsi($selected = null)
     {
+        $this->withSelected($selected);
+
         $options = $this->source->getAllProvinsi();
 
         return $this->generateSelect('provinsi', $options);
