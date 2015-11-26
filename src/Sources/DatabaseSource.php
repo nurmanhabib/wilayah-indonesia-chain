@@ -8,9 +8,22 @@ class DatabaseSource extends Source
 {
     protected $db;
 
-    public function __construct()
+    public function __construct($hostname = 'localhost', $username = 'root', $password = '', $database = 'nodatabase')
     {
-        $this->db = Capsule::connection();
+        $capsule = new Capsule;
+
+        $capsule->addConnection(array(
+           'driver'    => 'mysql',
+           'host'      => $hostname,
+           'database'  => $database,
+           'username'  => $username,
+           'password'  => $password,
+           'charset'   => 'utf8',
+           'collation' => 'utf8_unicode_ci',
+           'prefix'    => '',
+        ));
+
+        $this->db = $capsule->getConnection();
     }
 
     public function getAllProvinsi()

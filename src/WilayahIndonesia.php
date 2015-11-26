@@ -13,7 +13,7 @@ class WilayahIndonesia
 
     public function __construct(Sources\Source $source = null, $url_ajax = 'ajax.php')
     {
-        $this->source           = $source ?: new Sources\DatabaseSource;
+        $this->source           = $source ?: new Sources\ArraySource;
         $this->selected         = null;
         $this->url_ajax         = $url_ajax;
         $this->text_no_selected = array(
